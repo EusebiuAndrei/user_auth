@@ -1,9 +1,13 @@
 import React, { Component } from "react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
-
+import {observable} from 'mobx';
 //components
 import Register from "./Register";
+
+const store = observable({
+  user: {}
+});
 
 const QUERY = gql`
   query {

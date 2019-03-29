@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
+import {observable, action} from "mobx";
+import {observer} from 'mobx-react';
 
 const REGISTER_MUTATION = gql`
-  mutation createUser {
+  mutation createUser($username: String!, $email: String!) {
     createUser(
-      username: "user17"
-      email: "user17@yahoo.com"
+      username: "user_test"
+      email: "user_test@yahoo.com"
       plainPassword: "12345"
     ) {
       token
@@ -22,45 +24,61 @@ const REGISTER_MUTATION = gql`
   }
 `;
 
-const Register = () => {
-  return (
-    <Mutation mutation={REGISTER_MUTATION} onError={() => {}}>
-      {(addUser, result) => {
-        const { data, loading, error, called } = result;
-        if (!called) {
-          return (
-            <div>
-              {/* <input
-                  placeholder="Username"
-                  value={username}
-                  onChange={e => this.setState({ username: e.target.value })}
-                /> */}
-              <button data-testid="add-user-button" onClick={addUser}>
-                Create new user
-              </button>
-            </div>
-          );
-        }
-        if (loading) {
-          return <div>LOADING</div>;
-        }
-        if (error) {
-          return <div>ERROR</div>;
-        }
+class Register extends Component {
+  @observable newUser = {};
 
-        const { createUser } = data;
-        updateUser(data.user);
+  @action addCreateInfo(userField, fieldData) {
+    this.newUser[userField] = fieldData;
+    console.log(userField, this.newUser[userField]);
+  }
 
-        if (user) {
-          const { username, _id } = user;
+  render() {
+    return (
+      <Mutation mutation={REGISTER_MUTATION} variables={{ username: this.newUser.username, email: this.newUser.email }}  onError={() => {}}>
+        {(addUser, result) => {
+          const { data, loading, error, called } = result;
+          if (!called) {
+            return (
+              <div>
+                <input
+                    placeholder="Username"
+                    value={this.newUser.username}
+                    onChange={
+                    e => this.addCreateInfo("username", e.target.value)}
+                  />
+                <input
+                    placeholder="Email"
+                    value={this.newUser.email}
+                    onChange={
+                    e => this.addCreateInfo("email", e.target.value)}
+                  />
+                <button data-testid="add-user-button" onClick={addUser}>
+                  Create new user
+                </button>
+              </div>
+            );
+          }
+          if (loading) {
+            return <div>LOADING</div>;
+          }
+          if (error) {
+            return <div>ERROR</div>;
+          }
 
-          return <div>{`Created ${username} with id ${_id}`}</div>;
-        } else {
-          return null;
-        }
-      }}
-    </Mutation>
-  );
+          const { createUser } = data;
+          //updateUser(data.user);
+
+          if (user) {
+            const { username, _id } = user;
+
+            return <div>{`Created ${username} with id ${_id}`}</div>;
+          } else {
+            return null;
+          }
+        }}
+      </Mutation>
+    );
+  }
 };
 
 export default Register;
