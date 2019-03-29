@@ -4,6 +4,12 @@
   "scripts": {
     "start": "meteor run"
   },
+  "meteor": {
+    "mainModule": {
+      "client": "./client/main.js",
+      "server": "./server/main.js"
+    }
+  },
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "apollo-boost": "^0.3.1",
@@ -24,6 +30,8 @@
     "graphql-tools": "^4.0.4",
     "graphql-type-json": "^0.2.2",
     "meteor-node-stubs": "^0.4.1",
+    "mobx": "^5.7.0",
+    "mobx-react": "^5.4.3",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-apollo": "^2.5.2",
