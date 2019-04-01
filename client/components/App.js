@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import gql from "graphql-tag";
-import { Query } from "react-apollo";
 import {observable} from 'mobx';
 import {observer, Provider} from 'mobx-react';
 import { Switch, Route } from 'react-router-dom'
+import { mole, Agent } from 'react-molecule';
 //components
 import Header from './Header'
 import Register from "./Register";
@@ -18,30 +17,38 @@ store.updateUser = function(newUser) {
   this.user = newUser;
 }
 
-const QUERY = gql`
-  query {
-    sayHello
-  }
-`;
+class UserAgent extends Agent {
+  store = observable({
+    user: {}
+  });
 
-@observer class App extends Component {
-  render() {
-    const {username} = store.user;
-    return (
-      <Provider store={store}>
-        <div className="center w85">
-          <Header />
-          <div className="ph3 pv1 background-gray">
-            <Switch>
-              <Route exact path="/" component={Profile} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/register" component={Register} />
-            </Switch>
-          </div>
-        </div>
-      </Provider>
-    );
+  updateUser = (newUser) => {
+    this.user = newUser;
+    console.log(this.user);
   }
 }
 
-export default App;
+const App = mole(() => {
+  return {
+    agents: {
+      user: UserAgent.factory()
+    }
+  }
+})(({ molecule }) => {
+  return (
+    <Provider store={store}>
+      <div className="center w85">
+        <Header />
+        <div className="ph3 pv1 background-gray">
+          <Switch>
+            <Route exact path="/" render={() => <Profile molecule={molecule}/>} />
+            <Route exact path="/login" render={() => <Login molecule={molecule}/>} />
+            <Route exact path="/register" render={() => <Register molecule={molecule}/>} />
+          </Switch>
+        </div>
+      </div>
+    </Provider>
+  );
+});
+
+export default observer(App);

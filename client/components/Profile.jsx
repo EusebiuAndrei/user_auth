@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import gql from "graphql-tag";
-import { Query } from "react-apollo";
 import {observer} from 'mobx-react';
+import {withMolecule} from 'react-molecule';
 
 @observer(["store"]) 
 class App extends Component {
@@ -22,4 +21,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withMolecule(App);

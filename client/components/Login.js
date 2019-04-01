@@ -49,7 +49,7 @@ class Login extends Component {
 
   render() {
     const { username, plainPassword } = this.state.user;
-
+    console.log(this.props);
     return (
       <Mutation mutation={LOGIN_MUTATION} variables={{ username, plainPassword }} onCompleted={() => this.props.history.push('/')} onError={() => {}}>
         {(addUser, result) => {
@@ -96,7 +96,7 @@ class Login extends Component {
               </div>
             );
           }
-          
+
           if (loading) {
             return <div>LOADING</div>;
           }
@@ -104,6 +104,11 @@ class Login extends Component {
           const { loginWithPassword } = data;
           const { user: newUser } = loginWithPassword;
           this.props.store.updateUser(newUser);
+
+          const molecule = this.props.molecule;
+          console.log("MOLE", molecule);
+          //const { user } = this.props.molecule.agents.users;
+          //user.updateUser(newUser);
 
           if (newUser) {
             const { username, _id } = newUser;

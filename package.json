@@ -40,6 +40,7 @@
     "react": "^16.8.4",
     "react-apollo": "^2.5.2",
     "react-dom": "^16.8.4",
+    "react-molecule": "^0.1.5",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "subscriptions-transport-ws": "^0.9.16",
