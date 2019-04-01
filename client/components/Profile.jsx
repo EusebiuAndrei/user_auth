@@ -5,8 +5,12 @@ import {withMolecule} from 'react-molecule';
 @observer(["store"]) 
 class App extends Component {
   render() {
-    console.log(this.props.store.user);
-    const { username, _id } = this.props.store.user;
+    const { molecule } = this.props;
+    const { agents } = molecule;
+    const { user: userAgent } = agents;
+    const { user } = userAgent.store;
+    
+    const { username, _id } = user;
     return (
         <div className="container mt-5">
           <div className="row justify-content-center">

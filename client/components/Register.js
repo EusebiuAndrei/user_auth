@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import {observer} from 'mobx-react';
+import {withRouter} from 'react-router';
 
 const REGISTER_MUTATION = gql`
   mutation create($username: String!, $email: String!, $plainPassword: String!) {
@@ -111,16 +112,20 @@ class Register extends Component {
               </div>
             );
           }
-          
+
           if (loading) {
             return <div>LOADING</div>;
           }
 
+          const { molecule } = this.props;
+          const { agents } = molecule;
+          const { user } = agents;
+
           const { createUser } = data;
           const { user: newUser } = createUser;
-          this.props.store.updateUser(newUser);
 
           if (newUser) {
+            user.updateUser(newUser);
             const { username, _id } = newUser;
 
             return <div>{`Created ${username} with id ${_id}`}</div>;
@@ -133,4 +138,4 @@ class Register extends Component {
   }
 };
 
-export default Register;
+export default withRouter(Register);

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import {observer} from 'mobx-react';
+import {withRouter} from 'react-router';
 
 const LOGIN_MUTATION = gql`
   mutation loginUser($username: String!, $plainPassword: String!) {
@@ -49,7 +50,7 @@ class Login extends Component {
 
   render() {
     const { username, plainPassword } = this.state.user;
-    console.log(this.props);
+
     return (
       <Mutation mutation={LOGIN_MUTATION} variables={{ username, plainPassword }} onCompleted={() => this.props.history.push('/')} onError={() => {}}>
         {(addUser, result) => {
@@ -96,21 +97,20 @@ class Login extends Component {
               </div>
             );
           }
-
+          
           if (loading) {
             return <div>LOADING</div>;
           }
 
+          const { molecule } = this.props;
+          const { agents } = molecule;
+          const { user } = agents;
+
           const { loginWithPassword } = data;
           const { user: newUser } = loginWithPassword;
-          this.props.store.updateUser(newUser);
-
-          const molecule = this.props.molecule;
-          console.log("MOLE", molecule);
-          //const { user } = this.props.molecule.agents.users;
-          //user.updateUser(newUser);
 
           if (newUser) {
+            user.updateUser(newUser);
             const { username, _id } = newUser;
 
             return <div>{`Created ${username} with id ${_id}`}</div>;
@@ -123,4 +123,4 @@ class Login extends Component {
   }
 };
 
-export default Login;
+export default withRouter(Login);

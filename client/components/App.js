@@ -23,8 +23,8 @@ class UserAgent extends Agent {
   });
 
   updateUser = (newUser) => {
-    this.user = newUser;
-    console.log(this.user);
+    this.store.user = newUser;
+    console.log("agent store", this.store.user);
   }
 }
 
