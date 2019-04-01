@@ -3,13 +3,9 @@ import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import {observer} from 'mobx-react';
 
-const REGISTER_MUTATION = gql`
-  mutation create($username: String!, $email: String!, $plainPassword: String!) {
-    createUser(
-      username: $username
-      email: $email
-      plainPassword: $plainPassword
-    ) {
+const LOGIN_MUTATION = gql`
+  mutation loginUser($username: String!, $plainPassword: String!) {
+    loginWithPassword(username: $username, plainPassword: $plainPassword) {
       token
       user {
         _id
@@ -24,7 +20,7 @@ const REGISTER_MUTATION = gql`
 `;
 
 @observer(["store"])
-class Register extends Component {
+class Login extends Component {
   state = {
     user: {
       username: "",
@@ -52,12 +48,13 @@ class Register extends Component {
   }
 
   render() {
-    const { username, email, plainPassword } = this.state.user;
+    const { username, plainPassword } = this.state.user;
 
     return (
-      <Mutation mutation={REGISTER_MUTATION} variables={{ username, email, plainPassword }} onCompleted={() => this.props.history.push('/')} onError={() => {}}>
+      <Mutation mutation={LOGIN_MUTATION} variables={{ username, plainPassword }} onCompleted={() => this.props.history.push('/')} onError={() => {}}>
         {(addUser, result) => {
           const { data, loading, error, called } = result;
+          console.log("first", data);
           if (!called || error) {
             return (
               <div className="container mt-5">
@@ -78,18 +75,6 @@ class Register extends Component {
                         />
                       </div>
                       <div className="form-group">
-                        <label htmlFor="user-email">Email</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="user-email"
-                          name="email"
-                          value={email}
-                          onChange={
-                          e => this.handleUserFieldChange("email", e.target.value)}
-                        />
-                      </div>
-                      <div className="form-group">
                         <label htmlFor="user-password">Password</label>
                         <input
                           type="text"
@@ -101,8 +86,8 @@ class Register extends Component {
                           e => this.handleUserFieldChange("plainPassword", e.target.value)}
                         />
                       </div>
-                      <button type="submit" className="btn btn-primary" onClick={() => console.log(plainPassword)}>
-                        Register
+                      <button type="submit" className="btn btn-primary">
+                        Log in
                       </button>
                     </form>
                     {this.displayErrors(error)}
@@ -116,8 +101,8 @@ class Register extends Component {
             return <div>LOADING</div>;
           }
 
-          const { createUser } = data;
-          const { user: newUser } = createUser;
+          const { loginWithPassword } = data;
+          const { user: newUser } = loginWithPassword;
           this.props.store.updateUser(newUser);
 
           if (newUser) {
@@ -133,4 +118,4 @@ class Register extends Component {
   }
 };
 
-export default Register;
+export default Login;

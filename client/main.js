@@ -13,14 +13,18 @@ import client from "./holdClient";
 import { decorate, observable, action } from "mobx";
 import { observer } from "mobx-react";
 
+import { BrowserRouter } from 'react-router-dom'
+
 //components
 import App from "./components/App";
 
 Meteor.startup(() => {
   render(
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>,
+    <BrowserRouter>
+      <ApolloProvider client={client}>
+        <App className="container"/>
+      </ApolloProvider>
+    </BrowserRouter>,
     document.getElementById("app")
   );
 });
