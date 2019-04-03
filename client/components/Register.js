@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
-import {observer} from 'mobx-react';
-import {withRouter} from 'react-router';
+import { observer } from "mobx-react";
+import { withRouter } from "react-router";
 
 const REGISTER_MUTATION = gql`
-  mutation create($username: String!, $email: String!, $plainPassword: String!) {
+  mutation create(
+    $username: String!
+    $email: String!
+    $plainPassword: String!
+  ) {
     createUser(
       username: $username
       email: $email
@@ -37,26 +41,34 @@ class Register extends Component {
   handleUserFieldChange = (userField, userData) => {
     const user = this.state.user;
     user[userField] = userData;
-    this.setState({user});
-  }
+    this.setState({ user });
+  };
 
-  displayErrors = (error) => {
-    if(error) {
+  displayErrors = error => {
+    if (error) {
       return (
         <div className="mt-3">
           <h3>Try again</h3>
-          <pre>{error.graphQLErrors.map(({ message }, i) => (
-            <span key={i}>{message}</span>
-          ))}</pre>
-        </div>);
+          <pre>
+            {error.graphQLErrors.map(({ message }, i) => (
+              <span key={i}>{message}</span>
+            ))}
+          </pre>
+        </div>
+      );
     }
-  }
+  };
 
   render() {
     const { username, email, plainPassword } = this.state.user;
 
     return (
-      <Mutation mutation={REGISTER_MUTATION} variables={{ username, email, plainPassword }} onCompleted={() => this.props.history.push('/')} onError={() => {}}>
+      <Mutation
+        mutation={REGISTER_MUTATION}
+        variables={{ username, email, plainPassword }}
+        onCompleted={() => this.props.history.push("/")}
+        onError={() => {}}
+      >
         {(addUser, result) => {
           const { data, loading, error, called } = result;
           if (!called || error) {
@@ -74,8 +86,12 @@ class Register extends Component {
                           name="username"
                           placeholder="How would you like to be called?"
                           value={username}
-                          onChange={
-                            e => this.handleUserFieldChange("username", e.target.value)}
+                          onChange={e =>
+                            this.handleUserFieldChange(
+                              "username",
+                              e.target.value
+                            )
+                          }
                         />
                       </div>
                       <div className="form-group">
@@ -86,23 +102,32 @@ class Register extends Component {
                           id="user-email"
                           name="email"
                           value={email}
-                          onChange={
-                          e => this.handleUserFieldChange("email", e.target.value)}
+                          onChange={e =>
+                            this.handleUserFieldChange("email", e.target.value)
+                          }
                         />
                       </div>
                       <div className="form-group">
                         <label htmlFor="user-password">Password</label>
                         <input
-                          type="text"
+                          type="password"
                           className="form-control"
                           id="user-password"
                           name="plainPassword"
                           value={plainPassword}
-                          onChange={
-                          e => this.handleUserFieldChange("plainPassword", e.target.value)}
+                          onChange={e =>
+                            this.handleUserFieldChange(
+                              "plainPassword",
+                              e.target.value
+                            )
+                          }
                         />
                       </div>
-                      <button type="submit" className="btn btn-primary" onClick={() => console.log(plainPassword)}>
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        onClick={() => console.log(plainPassword)}
+                      >
                         Register
                       </button>
                     </form>
@@ -136,6 +161,6 @@ class Register extends Component {
       </Mutation>
     );
   }
-};
+}
 
 export default withRouter(Register);

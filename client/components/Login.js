@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
-import {observer} from 'mobx-react';
-import {withRouter} from 'react-router';
+import { observer } from "mobx-react";
+import { withRouter } from "react-router";
 
 const LOGIN_MUTATION = gql`
   mutation loginUser($username: String!, $plainPassword: String!) {
@@ -33,26 +33,34 @@ class Login extends Component {
   handleUserFieldChange = (userField, userData) => {
     const user = this.state.user;
     user[userField] = userData;
-    this.setState({user});
-  }
+    this.setState({ user });
+  };
 
-  displayErrors = (error) => {
-    if(error) {
+  displayErrors = error => {
+    if (error) {
       return (
         <div className="mt-3">
           <h3>Try again</h3>
-          <pre>{error.graphQLErrors.map(({ message }, i) => (
-            <span key={i}>{message}</span>
-          ))}</pre>
-        </div>);
+          <pre>
+            {error.graphQLErrors.map(({ message }, i) => (
+              <span key={i}>{message}</span>
+            ))}
+          </pre>
+        </div>
+      );
     }
-  }
+  };
 
   render() {
     const { username, plainPassword } = this.state.user;
 
     return (
-      <Mutation mutation={LOGIN_MUTATION} variables={{ username, plainPassword }} onCompleted={() => this.props.history.push('/')} onError={() => {}}>
+      <Mutation
+        mutation={LOGIN_MUTATION}
+        variables={{ username, plainPassword }}
+        onCompleted={() => this.props.history.push("/")}
+        onError={() => {}}
+      >
         {(addUser, result) => {
           const { data, loading, error, called } = result;
           console.log("first", data);
@@ -71,20 +79,28 @@ class Login extends Component {
                           name="username"
                           placeholder="How would you like to be called?"
                           value={username}
-                          onChange={
-                            e => this.handleUserFieldChange("username", e.target.value)}
+                          onChange={e =>
+                            this.handleUserFieldChange(
+                              "username",
+                              e.target.value
+                            )
+                          }
                         />
                       </div>
                       <div className="form-group">
                         <label htmlFor="user-password">Password</label>
                         <input
-                          type="text"
+                          type="password"
                           className="form-control"
                           id="user-password"
                           name="plainPassword"
                           value={plainPassword}
-                          onChange={
-                          e => this.handleUserFieldChange("plainPassword", e.target.value)}
+                          onChange={e =>
+                            this.handleUserFieldChange(
+                              "plainPassword",
+                              e.target.value
+                            )
+                          }
                         />
                       </div>
                       <button type="submit" className="btn btn-primary">
@@ -97,7 +113,7 @@ class Login extends Component {
               </div>
             );
           }
-          
+
           if (loading) {
             return <div>LOADING</div>;
           }
@@ -121,6 +137,6 @@ class Login extends Component {
       </Mutation>
     );
   }
-};
+}
 
 export default withRouter(Login);
