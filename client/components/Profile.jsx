@@ -6,22 +6,22 @@ import { ReactiveQuery } from "apollo-live-client";
 
 const GET_MESSAGES = gql`
   query {
-    messages {
+    notifications {
       _id
+      title
       text
-      createdAt
     }
   }
 `;
 
 const SUBSCRIBE_MESSAGES = gql`
   subscription {
-    messages {
+    notifications {
       event
       doc {
         _id
+        title
         text
-        createdAt
       }
     }
   }
@@ -36,8 +36,15 @@ const Error = props => {
   return <p>Some error have occured</p>;
 };
 
-const PresentationalComponent = () => {
-  return <p>This is your data</p>;
+const PresentationalComponent = props => {
+  console.log(props.data.notifications);
+  return props.data.notifications.map(notification => (
+    <div className="col-md-4">
+      <h3>ID: {notification._id}</h3>
+      <p>Title: {notification.title}</p>
+      <p>Description: {notification.text}</p>
+    </div>
+  ));
 };
 
 const MessagesWithData = () => (
@@ -74,6 +81,8 @@ class App extends Component {
             </p>
             <p className="text-secondary">id: {_id !== undefined && _id}</p>
           </div>
+        </div>
+        <div className="row">
           <MessagesWithData />
         </div>
       </div>

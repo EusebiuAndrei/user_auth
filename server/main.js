@@ -45,7 +45,7 @@ load({
       doc: Message
     }
     type Notification {
-      _id: String!
+      _id: ID
       title: String
       text: String
     }
@@ -58,7 +58,8 @@ load({
       scream: String
       me(username: String): User
       messages: Message
-      notification: Notification
+      notification(title: String!): Notification
+      notifications: [Notification]
     }
     type Subscription {
       somethingChanged: Result
@@ -67,7 +68,7 @@ load({
       notifications: NotificationReactiveEvent
     }
     type Mutation {
-      createNotification: Notification
+      createNotification(title: String!, text: String!): Notification
     }
   `,
   resolvers: {
@@ -82,7 +83,10 @@ load({
         return Meteor.messages.findOne();
       },
       notification: (_, args, context) => {
-        return Meteor.notifications.findOne({ _id: "abc" });
+        return Meteor.notifications.findOne({ title: args.title });
+      },
+      notifications: (_, args, context) => {
+        return Meteor.notifications.find();
       }
     },
     Subscription: {
@@ -118,7 +122,13 @@ load({
     },
     Mutation: {
       createNotification: (_, args, context) => {
-        console.log(_);
+        if (!Meteor.notifications.findOne({ title: args.title })) {
+          Meteor.notifications.insert({
+            title: args.title,
+            text: args.text
+          });
+          return Meteor.notifications.findOne({ title: args.title });
+        }
       }
     }
   }
@@ -137,6 +147,23 @@ if (!Meteor.notifications.findOne({ _id: "abc" })) {
     text: "Try a notification"
   });
 }
+
+let myTitle = "title",
+  myDescription = "description",
+  ind = 1;
+// Meteor.setInterval(function() {
+//   myTitle += ind;
+//   myDescription += ind;
+//   ind++;
+//   const userId = Meteor.notifications.insert({
+//     title: myTitle,
+//     text: myDescription
+//   });
+
+//   Meteor.setTimeout(function() {
+//     //Meteor.users.remove({ _id: userId });
+//   }, 500);
+// }, 2000);
 
 // Meteor.setInterval(function() {
 //   notifId = notifId + val;
