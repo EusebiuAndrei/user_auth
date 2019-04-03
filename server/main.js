@@ -9,6 +9,15 @@ import { asyncIterator, astToFields, Event } from "apollo-live-server";
 
 import { PubSub } from "graphql-subscriptions";
 
+import "./accounts.js"; // this is what you care about
+
+import { Accounts } from "meteor/accounts-base";
+
+Accounts.config({
+  // loginExpirationInDays: 0.0416667,
+  loginExpirationInDays: 3650
+});
+
 const pubsub = new PubSub();
 const SOMETHING_CHANGED_TOPIC = "something_changed";
 
@@ -86,6 +95,8 @@ load({
         return Meteor.notifications.findOne({ title: args.title });
       },
       notifications: (_, args, context) => {
+        //console.log(Meteor.notifications);
+        //Meteor.notifications.remove({});
         return Meteor.notifications.find();
       }
     },
@@ -136,66 +147,23 @@ load({
 
 // Meteor.users acts as any other Mongo.Collection you may have
 // Simulate some reactivity ...
-import { Accounts } from "meteor/accounts-base";
-let notifId = "abc",
-  val = 1;
-
-if (!Meteor.notifications.findOne({ _id: "abc" })) {
-  Meteor.notifications.insert({
-    _id: "abc",
-    title: "Notify",
-    text: "Try a notification"
-  });
-}
-
-let myTitle = "title",
-  myDescription = "description",
-  ind = 1;
+// let myTitle = "title",
+//   myDescription = "description",
+//   ind = 1;
 // Meteor.setInterval(function() {
 //   myTitle += ind;
 //   myDescription += ind;
 //   ind++;
-//   const userId = Meteor.notifications.insert({
-//     title: myTitle,
-//     text: myDescription
-//   });
+//   if (ind < 10) {
+//     Meteor.notifications.insert({
+//       title: myTitle,
+//       text: myDescription
+//     });
+//   }
 
 //   Meteor.setTimeout(function() {
 //     //Meteor.users.remove({ _id: userId });
 //   }, 500);
-// }, 2000);
-
-// Meteor.setInterval(function() {
-//   notifId = notifId + val;
-//   val++;
-//   Meteor.notifications.insert({
-//     _id: notifId,
-//     title: "Notify",
-//     text: "Try a notification"
-//   });
-
-//   Meteor.setTimeout(function() {
-//     //Meteor.users.remove({ _id: userId });
-//   }, 500);
-// }, 2000);
-
-// Meteor.setInterval(function() {
-//   const userId = Accounts.createUser({
-//     username: "Apollo is Live!"
-//   });
-
-//   Meteor.setTimeout(function() {
-//     Meteor.users.remove({ _id: userId });
-//   }, 500);
-// }, 2000);
-
-// let text = "1",
-//   val = 1;
-// pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: "123" } });
-// pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: "12345" } });
-// Meteor.setInterval(function() {
-//   pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: text } });
-//   text = `${text}${++val}`;
 // }, 2000);
 
 initialize();
